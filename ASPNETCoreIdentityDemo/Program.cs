@@ -1,5 +1,6 @@
 using ASPNETCoreIdentityDemo.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +10,12 @@ builder.Services.AddControllersWithViews();
 // configure identity
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
+
+// adding db connection
+builder.Services.AddDbContext<ApplicationDbContext>(option =>
+{
+    option.UseNpgsql(builder.Configuration.GetConnectionString("IdentityConnection"));
+});
 
 var app = builder.Build();
 
