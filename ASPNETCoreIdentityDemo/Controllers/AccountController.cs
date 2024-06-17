@@ -18,5 +18,11 @@ namespace ASPNETCoreIdentityDemo.Controllers
             _roleManager = roleManager;
             _userManager = userManager;
         }
+
+        [HttpGet]
+        public IActionResult Register()
+        {
+            return View();
+        }
     }
 }
