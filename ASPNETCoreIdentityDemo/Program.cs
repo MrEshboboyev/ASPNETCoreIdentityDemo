@@ -9,7 +9,8 @@ builder.Services.AddControllersWithViews();
 
 // configure identity
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
-    .AddEntityFrameworkStores<ApplicationDbContext>();
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders();
 
 // adding db connection
 builder.Services.AddDbContext<ApplicationDbContext>(option =>
