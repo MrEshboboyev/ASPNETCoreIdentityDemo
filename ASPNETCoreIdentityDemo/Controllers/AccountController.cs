@@ -35,6 +35,8 @@ namespace ASPNETCoreIdentityDemo.Controllers
             {
                 var user = new ApplicationUser
                 {
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
                     UserName = model.Email,
                     Email = model.Email
                 };
