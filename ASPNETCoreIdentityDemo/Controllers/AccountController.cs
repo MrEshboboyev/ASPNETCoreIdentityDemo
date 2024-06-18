@@ -20,6 +20,7 @@ namespace ASPNETCoreIdentityDemo.Controllers
             _userManager = userManager;
         }
 
+        #region Register
         [HttpGet]
         public IActionResult Register()
         {
@@ -54,6 +55,15 @@ namespace ASPNETCoreIdentityDemo.Controllers
             }
 
             return View(model);
-        } 
+        }
+        #endregion
+
+        #region Login
+        [HttpGet]
+        public IActionResult Login()
+        {
+            return View();
+        }
+        #endregion
     }
 }
