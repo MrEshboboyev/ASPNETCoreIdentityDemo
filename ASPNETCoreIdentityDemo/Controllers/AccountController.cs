@@ -88,5 +88,15 @@ namespace ASPNETCoreIdentityDemo.Controllers
             return View(model);
         }
         #endregion
+
+        #region Logout
+        [HttpPost]
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+            return RedirectToAction("Index", "Home");
+        }
+
+        #endregion
     }
 }
