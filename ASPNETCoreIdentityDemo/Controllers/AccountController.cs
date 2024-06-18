@@ -1,4 +1,5 @@
 ﻿using ASPNETCoreIdentityDemo.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -105,6 +106,26 @@ namespace ASPNETCoreIdentityDemo.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        #endregion
+
+        #region Email
+        [AllowAnonymous]
+        [HttpPost]
+        [HttpGet]
+        public async Task<IActionResult> IsEmailAvailable(string Email)
+        {
+            // Check if the email id is already use in Database
+            var user = await _userManager.FindByEmailAsync(Email);
+
+            if(user == null)
+            {
+                return Json(true);
+            }
+            else
+            {
+                return Json($"Email {Email} is already in use");
+            }
+        }
         #endregion
     }
 }
