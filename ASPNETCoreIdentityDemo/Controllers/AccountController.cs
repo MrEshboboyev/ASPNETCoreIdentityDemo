@@ -8,13 +8,13 @@ namespace ASPNETCoreIdentityDemo.Controllers
     public class AccountController : Controller
     {
         //DI identity classes
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public AccountController(SignInManager<IdentityUser> signInManager,
+        public AccountController(SignInManager<ApplicationUser> signInManager,
             RoleManager<IdentityRole> roleManager,
-            UserManager<IdentityUser> userManager)
+            UserManager<ApplicationUser> userManager)
         {
             _signInManager = signInManager;
             _roleManager = roleManager;
@@ -33,7 +33,7 @@ namespace ASPNETCoreIdentityDemo.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new IdentityUser
+                var user = new ApplicationUser
                 {
                     UserName = model.Email,
                     Email = model.Email
