@@ -120,5 +120,32 @@ namespace ASPNETCoreIdentityDemo.Controllers
             return View(model);
         }
         #endregion
+
+        #region Role Delete
+        [HttpPost]
+        public async Task<IActionResult> DeleteRole(string roleId)
+        {
+            var role = await _roleManager.FindByIdAsync(roleId);
+
+            if (role == null)
+            {
+                ModelState.AddModelError("", $"Role with ID = {roleId} is not found");
+                return View("Error");
+            }
+            var result = await _roleManager.DeleteAsync(role);
+
+            if (result.Succeeded)
+            {
+                return RedirectToAction("ListRoles");
+            }
+
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
+            }
+
+            return RedirectToAction("ListRoles", await _roleManager.Roles.ToListAsync());
+        }
+        #endregion
     }
 }
