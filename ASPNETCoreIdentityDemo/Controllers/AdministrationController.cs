@@ -8,9 +8,9 @@ namespace ASPNETCoreIdentityDemo.Controllers
     public class AdministrationController : Controller
     {
         // DI RoleManager
-        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly RoleManager<ApplicationRole> _roleManager;
 
-        public AdministrationController(RoleManager<IdentityRole> roleManager)
+        public AdministrationController(RoleManager<ApplicationRole> roleManager)
         {
             _roleManager = roleManager;
         }
@@ -35,9 +35,10 @@ namespace ASPNETCoreIdentityDemo.Controllers
                 }
                 else
                 {
-                    var role = new IdentityRole
+                    ApplicationRole role = new ApplicationRole
                     {
-                        Name = model.RoleName
+                        Name = model.RoleName,
+                        Description = model.Description
                     };
 
                     var result = await _roleManager.CreateAsync(role);
@@ -63,7 +64,7 @@ namespace ASPNETCoreIdentityDemo.Controllers
         [HttpGet]
         public async Task<IActionResult> ListRoles()
         {
-            List<IdentityRole> roles = await _roleManager.Roles.ToListAsync();
+            List<ApplicationRole> roles = await _roleManager.Roles.ToListAsync();
             return View(roles);
         }
         #endregion
@@ -72,7 +73,7 @@ namespace ASPNETCoreIdentityDemo.Controllers
         [HttpGet]
         public async Task<IActionResult> EditRole(string roleId)
         {
-            IdentityRole role = await _roleManager.FindByIdAsync(roleId);
+            ApplicationRole role = await _roleManager.FindByIdAsync(roleId);
 
             if (role == null)
             {
@@ -82,7 +83,8 @@ namespace ASPNETCoreIdentityDemo.Controllers
             var model = new EditRoleViewModel
             {
                 Id = role.Id,
-                RoleName = role.Name
+                RoleName = role.Name,
+                Description= role.Description
             };
 
             return View(model);
@@ -93,7 +95,7 @@ namespace ASPNETCoreIdentityDemo.Controllers
         {
             if (ModelState.IsValid)
             {
-                var role = await _roleManager.FindByIdAsync(model.Id);
+                ApplicationRole role = await _roleManager.FindByIdAsync(model.Id);
 
                 if (role == null)
                 {
@@ -102,6 +104,7 @@ namespace ASPNETCoreIdentityDemo.Controllers
                 else
                 {
                     role.Name = model.RoleName;
+                    role.Description = model.Description;
                     // if needed, other fields updated here
 
                     var result = await _roleManager.UpdateAsync(role);

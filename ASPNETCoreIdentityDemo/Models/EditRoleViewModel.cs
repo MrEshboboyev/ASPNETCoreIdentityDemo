@@ -8,5 +8,6 @@ namespace ASPNETCoreIdentityDemo.Models
         public string Id { get; set; }
         [Required(ErrorMessage = "Role Name is required")]
         public string RoleName { get; set; }
+        public string? Description { get; set; }
     }
 }

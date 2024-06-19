@@ -1,5 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Identity
-@model IEnumerable<IdentityRole>
+@model IEnumerable<ApplicationRole>
 
 @{
     ViewBag.Title = "All Roles";
@@ -20,6 +20,7 @@
             </div>
             <div class="card-body">
                 <h5 class="card-title">@role.Name</h5>
+                <h3 class="card-title">@role.Description</h3>
             </div>
             <div class="card-footer">
 

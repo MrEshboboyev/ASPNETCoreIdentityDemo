@@ -8,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 // configure identity
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>(
+builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(
     options =>
     {
         // Password  settings
