@@ -9,10 +9,12 @@ namespace ASPNETCoreIdentityDemo.Controllers
     {
         // DI RoleManager
         private readonly RoleManager<ApplicationRole> _roleManager;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public AdministrationController(RoleManager<ApplicationRole> roleManager)
+        public AdministrationController(RoleManager<ApplicationRole> roleManager, UserManager<ApplicationUser> userManager)
         {
             _roleManager = roleManager;
+            _userManager = userManager;
         }
 
         #region Role Create
