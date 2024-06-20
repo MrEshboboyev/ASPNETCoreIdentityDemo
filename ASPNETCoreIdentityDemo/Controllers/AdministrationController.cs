@@ -150,19 +150,36 @@ namespace ASPNETCoreIdentityDemo.Controllers
                 ModelState.AddModelError("", $"Role with ID = {roleId} is not found");
                 return View("Error");
             }
-            var result = await _roleManager.DeleteAsync(role);
-
-            if (result.Succeeded)
+            else
             {
-                return RedirectToAction("ListRoles");
-            }
+                try
+                {
+                    var result = await _roleManager.DeleteAsync(role);
 
-            foreach (var error in result.Errors)
-            {
-                ModelState.AddModelError(string.Empty, error.Description);
-            }
+                    if (result.Succeeded)
+                    {
+                        return RedirectToAction("ListRoles");
+                    }
 
-            return RedirectToAction("ListRoles", await _roleManager.Roles.ToListAsync());
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+
+                    return RedirectToAction("ListRoles", await _roleManager.Roles.ToListAsync());
+                }
+                catch(DbUpdateException ex)
+                {
+                    // Log the exception to a file. 
+                    ViewBag.Error = ex.Message;
+                    // Pass the ErrorTitle and ErrorMessage that you want to show to the user using ViewBag.
+                    // The Error view retrieves this data from the ViewBag and displays to the user.
+                    ViewBag.ErrorTitle = $"{role.Name} Role is in Use";
+                    ViewBag.ErrorMessage = $"{role.Name} Role cannot be deleted as there are users in this role. If you want to delete this role, please remove the users from the role and then try to delete";
+                    return View("Error");
+                    throw; 
+                }
+            }
         }
         #endregion
 
