@@ -289,7 +289,40 @@ namespace ASPNETCoreIdentityDemo.Controllers
                 Claims = claims.Select(c => c.Value).ToList(),
                 Roles = roles
             };
+             
+            return View(model);
+        }
 
+        [HttpPost]
+        public async Task<IActionResult> EditUser(EditUserViewModel model)
+        {
+            var user = await _userManager.FindByIdAsync(model.Id);
+
+            if(user == null)
+            {
+                ViewBag.ErrorMessage = $"User with ID = {model.Id} cannot be found";
+                return View("NotFound");
+            }
+
+            // update properties in database for user
+            user.Email= model.Email;
+            user.UserName = model.UserName;
+            user.FirstName = model.FirstName;
+            user.LastName = model.LastName;
+
+            var result = await _userManager.UpdateAsync(user);
+
+            if(result.Succeeded)
+            {
+                return RedirectToAction("ListUsers");
+            }
+            else
+            {
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError("", error.Description);
+                }
+            }
             return View(model);
         }
         #endregion
