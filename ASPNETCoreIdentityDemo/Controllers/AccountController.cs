@@ -129,5 +129,14 @@ namespace ASPNETCoreIdentityDemo.Controllers
             }
         }
         #endregion
+
+        #region Access Denied
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
+        #endregion
     }
 }

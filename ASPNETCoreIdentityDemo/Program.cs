@@ -33,6 +33,9 @@ builder.Services.ConfigureApplicationCookie(options =>
 {
     // default LoginPath = "/Account/Login"
     options.LoginPath = "/Account/Login";
+    
+    // default AccessDeniedPath = "/Account/AccessDenied"
+    options.AccessDeniedPath = "/Account/AccessDenied";
 });
 
 var app = builder.Build();
