@@ -375,5 +375,49 @@ namespace ASPNETCoreIdentityDemo.Controllers
             }
         }
         #endregion
+
+        #region Manage User Role
+        [HttpGet]
+        public async Task<IActionResult> ManageUserRoles(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+
+            if (user == null)
+            {
+                ViewBag.ErrorMessage = $"User with Id = {userId} cannot be found";
+                return View("NotFound");
+            }
+
+            // sending UserId and UserName using ViewBag
+            ViewBag.UserId = user.Id;
+            ViewBag.UserName = user.UserName;
+
+            var model = new List<UserRolesViewModel>();
+
+
+            foreach(var role in _roleManager.Roles.ToList())
+            {
+                var userRolesViewModel = new UserRolesViewModel
+                {
+                    RoleId = role.Id,
+                    RoleName = role.Name,
+                    Description = role.Description
+                };
+
+                if(await _userManager.IsInRoleAsync(user, role.Name))
+                {
+                    userRolesViewModel.IsSelected = true;
+                }
+                else
+                {
+                    userRolesViewModel.IsSelected = false;
+                }
+
+                model.Add(userRolesViewModel);
+            }
+
+            return View(model);
+        }
+        #endregion
     }
 }
