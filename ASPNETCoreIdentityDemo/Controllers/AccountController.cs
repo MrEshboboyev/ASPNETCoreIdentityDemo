@@ -46,6 +46,12 @@ namespace ASPNETCoreIdentityDemo.Controllers
                 // logged this user
                 if (result.Succeeded)
                 {
+                    // redirect to ListRoles user as "Admin"
+                    if(_signInManager.IsSignedIn(User) && User.IsInRole("Admin"))
+                    {
+                        return RedirectToAction("ListUsers", "Administration");
+                    }
+
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     return RedirectToAction("Index", "Home");
                 }
