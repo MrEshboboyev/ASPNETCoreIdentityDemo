@@ -9,11 +9,11 @@ namespace ASPNETCoreIdentityDemo.Controllers
     {
         //DI identity classes
         private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly UserManager<ApplicationUser> _userManager;
 
         public AccountController(SignInManager<ApplicationUser> signInManager,
-            RoleManager<IdentityRole> roleManager,
+            RoleManager<ApplicationRole> roleManager,
             UserManager<ApplicationUser> userManager)
         {
             _signInManager = signInManager;

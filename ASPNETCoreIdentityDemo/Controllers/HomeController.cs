@@ -5,6 +5,7 @@ using System.Diagnostics;
 
 namespace ASPNETCoreIdentityDemo.Controllers
 {
+    [Authorize(Roles = "Admin, Moderator")]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -20,7 +21,6 @@ namespace ASPNETCoreIdentityDemo.Controllers
             return View();
         }
 
-        [Authorize]
         public IActionResult Privacy()
         {
             return View();
@@ -32,7 +32,7 @@ namespace ASPNETCoreIdentityDemo.Controllers
             return View();
         }
         
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public IActionResult SecureMethod()
         {
             return View();
