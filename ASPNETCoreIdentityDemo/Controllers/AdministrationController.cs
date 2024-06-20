@@ -263,5 +263,35 @@ namespace ASPNETCoreIdentityDemo.Controllers
             return View(users);
         }
         #endregion
+
+        #region Edit User
+        [HttpGet]
+        public async Task<IActionResult> EditUser(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+
+            if(user == null)
+            {
+                ViewBag.ErrorMessage = $"User with ID = {userId} cannot be found";
+                return View("NotFound");
+            }
+
+            var claims = await _userManager.GetClaimsAsync(user);
+            var roles = await _userManager.GetRolesAsync(user);
+
+            var model = new EditUserViewModel
+            {
+                Id = userId,
+                UserName = user.UserName,
+                Email = user.Email,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Claims = claims.Select(c => c.Value).ToList(),
+                Roles = roles
+            };
+
+            return View(model);
+        }
+        #endregion
     }
 }
