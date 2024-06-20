@@ -86,8 +86,19 @@ namespace ASPNETCoreIdentityDemo.Controllers
             {
                 Id = role.Id,
                 RoleName = role.Name,
-                Description= role.Description
+                Description= role.Description,
+                Users = new List<string>()
             };
+
+            // added users in this role for display in view
+            foreach(var user in _userManager.Users.ToList())
+            {
+                // if in this role user
+                if(await _userManager.IsInRoleAsync(user, role.Name))
+                {
+                    model.Users.Add(user.UserName);
+                }
+            }
 
             return View(model);
         }
