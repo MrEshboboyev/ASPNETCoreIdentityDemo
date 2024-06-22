@@ -418,6 +418,47 @@ namespace ASPNETCoreIdentityDemo.Controllers
 
             return View(model);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> ManageUserRoles(List<UserRolesViewModel> model, string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+
+            if(user == null)
+            {
+                ViewBag.ErrorMessage = $"User with Id = {userId} cannot be found";
+                return View("NotFound");
+            }
+
+            // get all roles
+            var roles = await _userManager.GetRolesAsync(user);
+
+            // removing all roles from this user
+            var result = await _userManager.RemoveFromRolesAsync(user, roles);
+
+            if(!result.Succeeded)
+            {
+                ModelState.AddModelError("", "Cannot remove user existing roles");
+                return View(model);
+            }
+
+            List<string> RolesToBeAssigned = model.Where(r => r.IsSelected).Select(role => role.RoleName).ToList();
+            
+            if(RolesToBeAssigned.Any())
+            {
+                // any checkbox selected in view
+                result = await _userManager.AddToRolesAsync(user, RolesToBeAssigned);
+
+                if(!result.Succeeded)
+                {
+                    ModelState.AddModelError("", "Cannot Add Selected Roles to User");
+                    return View(model);
+                }
+            }
+
+            // return EditUser action with "userId" argument
+            return RedirectToAction("EditUser", new { userId = userId });
+        }
         #endregion
     }
 }
