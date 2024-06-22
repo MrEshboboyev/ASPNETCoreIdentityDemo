@@ -41,8 +41,8 @@ builder.Services.ConfigureApplicationCookie(options =>
 // adding authorization for claim policy
 builder.Services.AddAuthorization(option =>
 {
-    option.AddPolicy("DeleteRolePolicy",
-        policy => policy.RequireClaim("Delete Role"));
+    option.AddPolicy("DeleteRolePolicy", policy => policy.RequireClaim("Delete Role"));
+    option.AddPolicy("EditRolePolicy", policy => policy.RequireClaim("Edit Role"));
 });
 
 var app = builder.Build();
