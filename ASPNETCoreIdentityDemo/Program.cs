@@ -38,6 +38,13 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.AccessDeniedPath = "/Account/AccessDenied";
 });
 
+// adding authorization for claim policy
+builder.Services.AddAuthorization(option =>
+{
+    option.AddPolicy("DeleteRolePolicy",
+        policy => policy.RequireClaim("Delete Role"));
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
