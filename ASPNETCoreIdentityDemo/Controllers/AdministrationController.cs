@@ -460,5 +460,49 @@ namespace ASPNETCoreIdentityDemo.Controllers
             return RedirectToAction("EditUser", new { userId = userId });
         }
         #endregion
+
+        #region Manage User Claims
+        [HttpGet]
+        public async Task<IActionResult> ManageUserClaims(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+
+            if(user == null)
+            {
+                ViewBag.ErrorMessage = $"User with Id = {userId} cannot be found";
+                return View("NotFound");
+            }
+
+            // sending UserName to view
+            ViewBag.UserName = user.UserName;
+
+            var model = new UserClaimsViewModel
+            {
+                UserId = userId
+            };
+
+            // get all claims of this user from database
+            var existingUserClaims = await _userManager.GetClaimsAsync(user);
+
+            foreach (var claim in ClaimsStore.GetAllClaims())
+            {
+                // create UserClaim to add sending model List<UserClaim>
+                UserClaim userClaim = new UserClaim
+                {
+                    ClaimType = claim.Type
+                };
+
+                if (existingUserClaims.Any(c => c.Type == claim.Type))
+                {
+                    userClaim.IsSelected = true;
+                }
+
+                // adding prepared userClaim added to model claims
+                model.Claims.Add(userClaim);
+            }
+
+            return View(model);
+        }
+        #endregion
     }
 }
