@@ -38,6 +38,15 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.AccessDeniedPath = "/Account/AccessDenied";
 });
 
+// add authentication for external providers
+builder.Services.AddAuthentication()
+    .AddGoogle(options =>
+    {
+        options.ClientId = "674296594627-9paoasae6t1sbu7rvk3dl1stqbhlqvuc.apps.googleusercontent.com";
+        options.ClientSecret = "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";
+        // other options configure here
+    });
+
 // adding authorization for claim policy
 builder.Services.AddAuthorization(option =>
 {
