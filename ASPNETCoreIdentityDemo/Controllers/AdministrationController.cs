@@ -90,11 +90,17 @@ namespace ASPNETCoreIdentityDemo.Controllers
                 Id = role.Id,
                 RoleName = role.Name,
                 Description= role.Description,
-                Users = new List<string>()
             };
 
+            // avoid NullReferenceException
+            model.Users = new List<string>();
+            model.Claims = new List<string>();
+
+            var claims = await _roleManager.GetClaimsAsync(role);
+            model.Claims = claims.Select(c => c.Value).ToList();
+
             // added users in this role for display in view
-            foreach(var user in _userManager.Users.ToList())
+            foreach (var user in _userManager.Users.ToList())
             {
                 // if in this role user
                 if(await _userManager.IsInRoleAsync(user, role.Name))
