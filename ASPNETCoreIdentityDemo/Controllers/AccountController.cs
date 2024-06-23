@@ -69,10 +69,14 @@ namespace ASPNETCoreIdentityDemo.Controllers
 
         #region Login
         [HttpGet]
-        public IActionResult Login(string? ReturnUrl = null)
+        public async Task<IActionResult> Login(string? ReturnUrl = null)
         {
-            ViewData["ReturnUrl"] = ReturnUrl;
-            return View();
+            LoginViewModel model = new LoginViewModel()
+            {
+                ReturnUrl = ReturnUrl,
+                ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList()
+            };
+            return View(model);
         }
 
         [HttpPost]

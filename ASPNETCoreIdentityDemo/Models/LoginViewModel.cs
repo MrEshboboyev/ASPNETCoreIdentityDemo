@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+﻿using Microsoft.AspNetCore.Authentication;
 using System.ComponentModel.DataAnnotations;
 
 namespace ASPNETCoreIdentityDemo.Models
@@ -15,5 +15,10 @@ namespace ASPNETCoreIdentityDemo.Models
 
         [Display(Name = "Remember Me")]
         public bool RememberMe { get; set; }
+
+        public string? ReturnUrl { get; set; }
+
+        // AuthenticationScheme is in Microsoft.AspNetCore.Authentication namespace
+        public IList<AuthenticationScheme>? ExternalLogins { get; set; }
     }
 }
