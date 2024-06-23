@@ -73,6 +73,9 @@ builder.Services.AddAuthorization(option =>
     option.AddPolicy("EditRolePolicy", policy => policy.RequireClaim("Edit Role"));
 });
 
+// adding email service lifetime
+builder.Services.AddTransient<ISenderEmail, EmailSender>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
