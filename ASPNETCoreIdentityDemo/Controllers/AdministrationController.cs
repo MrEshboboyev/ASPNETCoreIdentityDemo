@@ -292,6 +292,7 @@ namespace ASPNETCoreIdentityDemo.Controllers
 
         #region Edit User
         [HttpGet]
+        [Authorize(Policy = "EditRolePolicy")]
         public async Task<IActionResult> EditUser(string userId)
         {
             var user = await _userManager.FindByIdAsync(userId);
@@ -320,6 +321,7 @@ namespace ASPNETCoreIdentityDemo.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "EditRolePolicy")]
         public async Task<IActionResult> EditUser(EditUserViewModel model)
         {
             var user = await _userManager.FindByIdAsync(model.Id);
@@ -355,6 +357,7 @@ namespace ASPNETCoreIdentityDemo.Controllers
 
         #region Delete User
         [HttpPost]
+        [Authorize(Policy = "DeleteRolePolicy")]
         public async Task<IActionResult> DeleteUser(string userId)
         {
             var user = await _userManager.FindByIdAsync(userId);
