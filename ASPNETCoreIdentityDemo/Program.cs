@@ -46,10 +46,16 @@ builder.Services.AddAuthentication()
         options.ClientSecret = "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";
         // other options configure here
     })
-    .AddMicrosoftAccount(options =>
+    .AddMicrosoftAccount(microsoftOptions =>
     {
-        options.ClientId = "f5f2276d-b13f-4d3c-a78a-9e478f2895b1";
-        options.ClientSecret = "4BI8Q~7.j32pRAZfMA.ioId4DV41PZwGVC8Yodkp";
+        microsoftOptions.ClientId = "f5f2276d-b13f-4d3c-a78a-9e478f2895b1";
+        microsoftOptions.ClientSecret = "4BI8Q~7.j32pRAZfMA.ioId4DV41PZwGVC8Yodkp";
+        // other options configure here
+    })
+    .AddFacebook(facebookOptions =>
+    {
+        facebookOptions.ClientId = "1162385198371540";
+        facebookOptions.ClientSecret = "57804836aa85c66795218dedb99bfdb3";
         // other options configure here
     });
 
