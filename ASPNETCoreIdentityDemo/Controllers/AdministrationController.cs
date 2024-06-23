@@ -551,5 +551,44 @@ namespace ASPNETCoreIdentityDemo.Controllers
             return RedirectToAction("EditUser", new { userId = model.UserId });
         }
         #endregion
+
+        #region Manage Role Claims
+        [HttpGet]
+        public async Task<IActionResult> ManageRoleClaims(string roleId)
+        {
+            var role = await _roleManager.FindByIdAsync(roleId);
+
+            if(role == null)
+            {
+                ViewBag.ErrorMessage = $"Role with Id = {roleId} cannot be found";
+                return View("NotFound");
+            }
+
+            var model = new RoleClaimsViewModel
+            {
+                RoleId = role.Id
+            };
+
+            var existingRoleClaims = await _roleManager.GetClaimsAsync(role);
+
+            foreach (Claim claim in ClaimsStore.GetAllClaims())
+            {
+                RoleClaim roleClaim = new RoleClaim
+                {
+                    ClaimType = claim.Type
+                };
+
+                // check claim in the database and selected
+                if(existingRoleClaims.Any(c => c.Type == claim.Type))
+                {
+                    roleClaim.IsSelected = true;
+                }
+
+                model.Claims.Add(roleClaim);
+            }
+
+            return View(model);
+        }
+        #endregion
     }
 }
