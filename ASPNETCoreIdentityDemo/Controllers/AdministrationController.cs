@@ -589,6 +589,57 @@ namespace ASPNETCoreIdentityDemo.Controllers
 
             return View(model);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> ManageRoleClaims(RoleClaimsViewModel model)
+        {
+            var role = await _roleManager.FindByIdAsync(model.RoleId);
+
+            if(role == null)
+            {
+                ViewBag.ErrorMessage = $"Role with Id = {model.RoleId} cannot be found";
+                return View("NotFound");
+            }
+
+            var claims = await _roleManager.GetClaimsAsync(role);
+
+            for(int i = 0; i < model.Claims.Count; i++)
+            {
+                Claim claim = new Claim(model.Claims[i].ClaimType, model.Claims[i].ClaimType);
+
+                IdentityResult? result;
+
+                if (model.Claims[i].IsSelected && !(claims.Any(c => c.Type == claim.Type)))
+                {
+                    // if this claim is not selected and is not database
+                    result = await _roleManager.AddClaimAsync(role, claim);
+                }
+                else if(!model.Claims[i].IsSelected && claims.Any(c => c.Type == claim.Type))
+                {
+                    // if this claim is not selected and it is database
+                    result = await _roleManager.RemoveClaimAsync(role, claim);
+                }
+                else
+                {
+                    continue;
+                }
+
+                if(result.Succeeded)
+                {
+                    if (i < model.Claims.Count - 1)
+                        continue;
+                    else
+                        return RedirectToAction("EditRole", new { roleId = role.Id });
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Cannot add or removed selected claims to role");
+                    return View(model);
+                }
+            }
+
+            return RedirectToAction("EditRole", new { roleId = model.RoleId });
+        }
         #endregion
     }
 }
