@@ -45,6 +45,12 @@ builder.Services.AddAuthentication()
         options.ClientId = "674296594627-9paoasae6t1sbu7rvk3dl1stqbhlqvuc.apps.googleusercontent.com";
         options.ClientSecret = "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";
         // other options configure here
+    })
+    .AddMicrosoftAccount(options =>
+    {
+        options.ClientId = "f5f2276d-b13f-4d3c-a78a-9e478f2895b1";
+        options.ClientSecret = "4BI8Q~7.j32pRAZfMA.ioId4DV41PZwGVC8Yodkp";
+        // other options configure here
     });
 
 // adding authorization for claim policy
