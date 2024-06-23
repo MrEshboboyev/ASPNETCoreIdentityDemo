@@ -39,25 +39,32 @@ builder.Services.ConfigureApplicationCookie(options =>
 });
 
 // add authentication for external providers
+var GoogleClientId = builder.Configuration["Google:AppId"];
+var GoogleClientSecret = builder.Configuration["Google:AppSecret"];
+
+var MicrosoftClientId = builder.Configuration["Microsoft:AppId"];
+var MicrosoftClientSecret = builder.Configuration["Microsoft:AppSecret"];
+
+var FacebookClientId = builder.Configuration["Facebook:AppId"];
+var FacebookClientSecret = builder.Configuration["Facebook:AppSecret"];
+
 builder.Services.AddAuthentication()
-    .AddGoogle(options =>
-    {
-        options.ClientId = "674296594627-9paoasae6t1sbu7rvk3dl1stqbhlqvuc.apps.googleusercontent.com";
-        options.ClientSecret = "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";
-        // other options configure here
-    })
-    .AddMicrosoftAccount(microsoftOptions =>
-    {
-        microsoftOptions.ClientId = "f5f2276d-b13f-4d3c-a78a-9e478f2895b1";
-        microsoftOptions.ClientSecret = "4BI8Q~7.j32pRAZfMA.ioId4DV41PZwGVC8Yodkp";
-        // other options configure here
-    })
-    .AddFacebook(facebookOptions =>
-    {
-        facebookOptions.ClientId = "1162385198371540";
-        facebookOptions.ClientSecret = "57804836aa85c66795218dedb99bfdb3";
-        // other options configure here
-    });
+.AddGoogle(options =>
+{
+    options.ClientId = GoogleClientId;
+    options.ClientSecret = GoogleClientSecret;
+    // You can set other options as needed.
+})
+.AddMicrosoftAccount(microsoftOptions =>
+{
+    microsoftOptions.ClientId = MicrosoftClientId;
+    microsoftOptions.ClientSecret = MicrosoftClientSecret;
+})
+.AddFacebook(facebookOptions =>
+{
+    facebookOptions.ClientId = FacebookClientId;
+    facebookOptions.ClientSecret = FacebookClientSecret;
+});
 
 // adding authorization for claim policy
 builder.Services.AddAuthorization(option =>
