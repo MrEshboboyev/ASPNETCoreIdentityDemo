@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using System.Text.Encodings.Web;
 
 namespace ASPNETCoreIdentityDemo.Controllers
 {
@@ -13,13 +14,18 @@ namespace ASPNETCoreIdentityDemo.Controllers
         private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly UserManager<ApplicationUser> _userManager;
 
+        // emailSender instance
+        private readonly ISenderEmail _emailSender;
+
         public AccountController(SignInManager<ApplicationUser> signInManager,
             RoleManager<ApplicationRole> roleManager,
-            UserManager<ApplicationUser> userManager)
+            UserManager<ApplicationUser> userManager,
+            ISenderEmail emailSender)
         {
             _signInManager = signInManager;
             _roleManager = roleManager;
             _userManager = userManager;
+            _emailSender = emailSender;
         }
 
         #region Register
@@ -244,6 +250,22 @@ namespace ASPNETCoreIdentityDemo.Controllers
 
                 return View("Error");
             }
+        }
+        #endregion
+
+        #region Send Confirmation Email
+        private async Task SendConfirmationEmail(string? email, ApplicationUser? user)
+        {
+            // Generate token
+            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+
+            // Build the Confirmation Link which must include the CallBack URL
+            var ConfirmationLink = Url.Action("ConfirmEmail", "Account", 
+                new { UserId = user.Id, Token = token }, protocol: HttpContext.Request.Scheme);
+
+            // Send the Confirmation Link to the User Email Id
+            await _emailSender.SendEmailAsync(email, "ConfirmYourEmail",
+                $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(ConfirmationLink)}'> clicking here</a>.");
         }
         #endregion
     }
