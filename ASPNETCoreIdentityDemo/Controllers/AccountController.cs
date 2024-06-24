@@ -489,5 +489,13 @@ namespace ASPNETCoreIdentityDemo.Controllers
             return View(model);
         }
         #endregion
+
+        #region Reset Password Confirmation
+        [AllowAnonymous]
+        public IActionResult ResetPasswordConfirmation()
+        {
+            return View();
+        }
+        #endregion
     }
 }
