@@ -53,14 +53,17 @@ namespace ASPNETCoreIdentityDemo.Controllers
                 // logged this user
                 if (result.Succeeded)
                 {
+                    // sending confirmation link to this user email
+                    await SendConfirmationEmail(model.Email, user);
+
                     // redirect to ListRoles user as "Admin"
                     if(_signInManager.IsSignedIn(User) && User.IsInRole("Admin"))
                     {
                         return RedirectToAction("ListUsers", "Administration");
                     }
 
-                    await _signInManager.SignInAsync(user, isPersistent: false);
-                    return RedirectToAction("Index", "Home");
+                    // if this user is not admin, redirect user to "RegistrationSuccessful"
+                    return View("RegistrationSuccessful");
                 }
 
                 // any errors displayed
