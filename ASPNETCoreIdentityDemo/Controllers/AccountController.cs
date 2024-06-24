@@ -92,8 +92,19 @@ namespace ASPNETCoreIdentityDemo.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel model, string? ReturnUrl)
         {
-            if(ModelState.IsValid)
+            model.ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+
+            if (ModelState.IsValid)
             {
+                // find this user
+                var user = await _userManager.FindByEmailAsync(model.Email);
+
+                if(user != null && !user.EmailConfirmed && (await _userManager.CheckPasswordAsync(user, model.Password)))
+                {
+                    ModelState.AddModelError(string.Empty, "Email not confirmed yet");
+                    return View(model);
+                }
+
                 var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, 
                     model.RememberMe, lockoutOnFailure: false);
 
@@ -115,11 +126,6 @@ namespace ASPNETCoreIdentityDemo.Controllers
                 else if (result.IsLockedOut)
                 {
                     // Handle lockout scenario
-                }
-                else if (result.IsNotAllowed)
-                {
-                    ModelState.AddModelError(string.Empty, "Email not confirmed yet");
-                    return View(model);
                 }
                 else
                 {
