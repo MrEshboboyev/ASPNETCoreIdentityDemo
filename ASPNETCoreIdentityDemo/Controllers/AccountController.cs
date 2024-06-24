@@ -425,5 +425,13 @@ namespace ASPNETCoreIdentityDemo.Controllers
                 $"Please reset your password by <a href='{HtmlEncoder.Default.Encode(passwordResetLink)}'>clicking here</a>.", true);
         }
         #endregion
+
+        #region Forgot Password Confirmation
+        [AllowAnonymous]
+        public ActionResult ForgotPasswordConfirmation()
+        {
+            return View();
+        }
+        #endregion
     }
 }
