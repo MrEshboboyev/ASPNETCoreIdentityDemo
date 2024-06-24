@@ -221,6 +221,25 @@ namespace ASPNETCoreIdentityDemo.Controllers
                 return View("Login", loginViewModel);
             }
 
+            // Email Confirmation Section
+            // Get the email claim from external login provider (Google, Facebook etc)
+            var email = info.Principal.FindFirstValue(ClaimTypes.Email);
+            ApplicationUser? user;
+
+            if (email != null)
+            {
+                // Find the user
+                user = await _userManager.FindByEmailAsync(email);
+
+                // If the user exists in our database and email is not confirmed,
+                // display login view with validation error
+                if (user != null && !user.EmailConfirmed)
+                {
+                    ModelState.AddModelError(string.Empty, "Email not confirmed yet");
+                    return View("Login", loginViewModel);
+                }
+            }
+
             // If the user already has a login (i.e., if there is a record in AspNetUserLogins table)
             // then sign-in the user with this external login provider
             var signInResult = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider,
@@ -234,13 +253,10 @@ namespace ASPNETCoreIdentityDemo.Controllers
             // If there is no record in AspNetUserLogins table, the user may not have a local account
             else
             {
-                // Get the email claim value
-                var email = info.Principal.FindFirstValue(ClaimTypes.Email);
-
                 if (email != null)
                 {
                     // Create a new user without password if we do not have a user already
-                    var user = await _userManager.FindByEmailAsync(email);
+                    user = await _userManager.FindByEmailAsync(email);
 
                     if (user == null)
                     {
@@ -259,10 +275,11 @@ namespace ASPNETCoreIdentityDemo.Controllers
                     // Add a login (i.e., insert a row for the user in AspNetUserLogins table)
                     await _userManager.AddLoginAsync(user, info);
 
-                    //Then SignIn the User
-                    await _signInManager.SignInAsync(user, isPersistent: false);
+                    //Then send the Confirmation Email to the User
+                    await SendConfirmationEmail(email, user);
 
-                    return LocalRedirect(returnUrl);
+                    //Redirect the user to the Successful Registration Page
+                    return View("RegistrationSuccessful");
                 }
 
                 // If we cannot find the user email we cannot continue
