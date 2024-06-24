@@ -25,14 +25,22 @@
                     </label>
                 </div>
             </div>
-            <button type="submit" class="btn btn-primary">Login</button>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Login</button>
+            </div>
+            <br />
+            <div class="form-group">
+                <a class="btn btn-primary" asp-controller="Account"
+                   asp-action="ResendConfirmationEmail">Confirm Email</a>
+            </div>
+
         </form>
     </div>
     <div class="col-md-6">
         <h1>External Login</h1>
         <hr />
         @{
-            if (Model.ExternalLogins?.Count == 0)
+            if (Model.ExternalLogins == null || Model.ExternalLogins?.Count == 0)
             {
                 <div>No external logins configured</div>
             }
@@ -42,7 +50,7 @@
                     <div>
                         @foreach (var provider in Model.ExternalLogins)
                         {
-                            <button type="submit" class="btn btn-primary"
+                            <button onclick="externalLogin(@provider.Name, @Model.ReturnUrl)" type="submit" class="btn btn-primary"
                                     name="provider" value="@provider.Name"
                                     title="Log in using your @provider.DisplayName account">
                                 @provider.DisplayName

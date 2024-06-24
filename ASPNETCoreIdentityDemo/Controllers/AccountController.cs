@@ -108,7 +108,19 @@ namespace ASPNETCoreIdentityDemo.Controllers
                         return RedirectToAction(nameof(HomeController.Index), "Home");
                     }
                 }
-
+                if (result.RequiresTwoFactor)
+                {
+                    // Handle two-factor authentication case
+                }
+                else if (result.IsLockedOut)
+                {
+                    // Handle lockout scenario
+                }
+                else if (result.IsNotAllowed)
+                {
+                    ModelState.AddModelError(string.Empty, "Email not confirmed yet");
+                    return View(model);
+                }
                 else
                 {
                     ModelState.AddModelError(string.Empty, "Invalid login attempt.");
