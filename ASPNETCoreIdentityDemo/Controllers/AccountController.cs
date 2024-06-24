@@ -384,6 +384,30 @@ namespace ASPNETCoreIdentityDemo.Controllers
         {
             return View();
         }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
+        {
+            if(ModelState.IsValid)
+            {
+                // find this user by email
+                var user = await _userManager.FindByEmailAsync(model.Email);
+
+                // checking user was found and email is confirmed
+                if(user != null && await _userManager.IsEmailConfirmedAsync(user))
+                {
+                    await SendForgotPasswordAsync(model.Email, user);
+
+                    return RedirectToAction("ForgotPasswordConfirmation", "Account");
+                }
+
+
+                return RedirectToAction("ForgotPasswordConfirmation", "Account");
+            }
+
+            return View(model);
+        }
         #endregion
 
         #region Send Forgot Password Email
