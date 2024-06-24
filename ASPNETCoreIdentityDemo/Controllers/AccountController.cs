@@ -433,5 +433,25 @@ namespace ASPNETCoreIdentityDemo.Controllers
             return View();
         }
         #endregion
+
+        #region Reset Password
+        public IActionResult ResetPassword(string Token, string Email)
+        {
+            // if token or email null, errors added ViewBag
+            if (Token == null || Email == null)
+            {
+                ViewBag.ErrorTitle = "Invalid Password Reset Token";
+                ViewBag.ErrorMessage = "The Link is Expired or Invalid";
+                return View("Error");
+            }
+            else
+            {
+                ResetPasswordViewModel model = new ResetPasswordViewModel();
+                model.Token = Token;
+                model.Email = Email;
+                return View(model);
+            }
+        }
+        #endregion
     }
 }
