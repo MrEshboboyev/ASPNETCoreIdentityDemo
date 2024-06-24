@@ -375,5 +375,14 @@ namespace ASPNETCoreIdentityDemo.Controllers
             return View("ConfirmationEmailSent");
         }
         #endregion
+
+        #region Forgot Password
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+        #endregion
     }
 }

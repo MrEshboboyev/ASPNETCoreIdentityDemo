@@ -30,10 +30,12 @@
             </div>
             <br />
             <div class="form-group">
-                <a class="btn btn-primary" asp-controller="Account"
+                <a class="btn btn-primary" asp-controller="Account" asp-route-IsResend="false"
                    asp-action="ResendConfirmationEmail">Confirm Email</a>
             </div>
-
+            <div>
+                <a asp-controller="Account" asp-action="ForgotPassword">Forgot Password?</a>
+            </div>
         </form>
     </div>
     <div class="col-md-6">
