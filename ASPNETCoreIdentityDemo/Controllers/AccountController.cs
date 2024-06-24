@@ -271,5 +271,36 @@ namespace ASPNETCoreIdentityDemo.Controllers
                 $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(ConfirmationLink)}'> clicking here</a>.");
         }
         #endregion
+
+        #region Confirm Email
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> ConfirmEmail(string UserId, string Token)
+        {
+            if (UserId == null || Token == null)
+            {
+                ViewBag.Message = "The link is Invalid or Expired";
+            }
+
+            // find user
+            var user = await _userManager.FindByIdAsync(UserId);
+            if (user == null) 
+            {
+                ViewBag.Message = $"The User ID {UserId} is Invalid";
+                return View("NotFound");
+            }
+
+            // Call the ConfirmEmailAsync method which will mark the Email is Confirmed
+            var result = await _userManager.ConfirmEmailAsync(user, Token);
+            if (result.Succeeded)
+            {
+                ViewBag.Message = "Thank you for confirming your email";
+                return View();
+            }
+
+            ViewBag.Message = "Email cannot be confirmed";
+            return View();
+        }
+        #endregion
     }
 }
