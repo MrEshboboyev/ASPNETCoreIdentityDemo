@@ -302,5 +302,23 @@ namespace ASPNETCoreIdentityDemo.Controllers
             return View();
         }
         #endregion
+
+        #region Resend Confirmation Email
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> ResendConfirmationEmail(bool isResend = true)
+        {
+            if(isResend)
+            {
+                ViewBag.Message = "Resend Confirmation Email";
+            }
+            else
+            {
+                ViewBag.Message = "Send Confirmation Email";
+            }
+
+            return View();
+        }
+        #endregion
     }
 }
