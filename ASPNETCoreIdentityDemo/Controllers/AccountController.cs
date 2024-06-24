@@ -1,6 +1,7 @@
 ﻿using ASPNETCoreIdentityDemo.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
@@ -382,6 +383,22 @@ namespace ASPNETCoreIdentityDemo.Controllers
         public IActionResult ForgotPassword()
         {
             return View();
+        }
+        #endregion
+
+        #region Send Forgot Password Email
+        private async Task SendForgotPasswordAsync(string? email, ApplicationUser? user)
+        {
+            // Generate the reset Password Token 
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+            // build the password reset link
+            var passwordResetLink = Url.Action("ResetPassword", "Account",
+                new { Email = email, Token = token }, protocol: HttpContext.Request.Scheme);
+
+            // send the confirmation email to the User Email Id
+            await _emailSender.SendEmailAsync(email, "Reset Your Password", 
+                $"Please reset your password by <a href='{HtmlEncoder.Default.Encode(passwordResetLink)}'>clicking here</a>.", true);
         }
         #endregion
     }
