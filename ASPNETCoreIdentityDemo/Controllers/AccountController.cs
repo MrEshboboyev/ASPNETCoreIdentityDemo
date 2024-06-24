@@ -306,7 +306,7 @@ namespace ASPNETCoreIdentityDemo.Controllers
         #region Resend Confirmation Email
         [HttpGet]
         [AllowAnonymous]
-        public async Task<IActionResult> ResendConfirmationEmail(bool isResend = true)
+        public IActionResult ResendConfirmationEmail(bool isResend = true)
         {
             if(isResend)
             {
@@ -318,6 +318,26 @@ namespace ASPNETCoreIdentityDemo.Controllers
             }
 
             return View();
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResendConfirmationEmail(string Email)
+        {
+            var user = await _userManager.FindByEmailAsync(Email);
+
+            if (user == null || await _userManager.IsEmailConfirmedAsync(user)) 
+            {
+                // Handle the situation when the user does not exist or Email already confirmed.
+                // For security, don't reveal that the user does not exist or Email is already confirmed
+                return View("ConfirmationEmailSent");
+            }
+
+            // if is not confirmed
+            await SendConfirmationEmail(Email, user);
+
+            return View("ConfirmationEmailSent");
         }
         #endregion
     }
