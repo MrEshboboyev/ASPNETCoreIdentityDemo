@@ -452,6 +452,42 @@ namespace ASPNETCoreIdentityDemo.Controllers
                 return View(model);
             }
         }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+        {
+            if(ModelState.IsValid)
+            {
+                // find user by email
+                var user = await _userManager.FindByEmailAsync(model.Email);
+
+                if(user != null)
+                {
+                    // reset password
+                    var result = await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
+
+                    if (result.Succeeded)
+                    {
+                        return RedirectToAction("ResetPasswordConfirmation", "Account");
+                    }
+
+                    // display errors 
+                    foreach(var error in result.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+
+                    return View(model);
+                }
+
+                // avoid attacks
+                return RedirectToAction("ResetPasswordConfirmation", "Account");
+            }
+
+            // display validation error
+            return View(model);
+        }
         #endregion
     }
 }
