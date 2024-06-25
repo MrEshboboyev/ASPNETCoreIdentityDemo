@@ -79,6 +79,13 @@ builder.Services.AddAuthorization(option =>
 // adding email service lifetime
 builder.Services.AddTransient<ISenderEmail, EmailSender>();
 
+// Configure Token LifeSpan
+builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
+{
+    // Set Token lifespan to 2 hours
+    options.TokenLifespan = TimeSpan.FromHours(2);
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
