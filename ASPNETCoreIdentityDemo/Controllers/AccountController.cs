@@ -416,6 +416,10 @@ namespace ASPNETCoreIdentityDemo.Controllers
             // Generate the reset Password Token 
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
 
+            // save the token into the AspNetUserTokens database table 
+            await _userManager.SetAuthenticationTokenAsync(user, "ResetPassword",
+                "ResetPasswordToken", token);
+
             // build the password reset link
             var passwordResetLink = Url.Action("ResetPassword", "Account",
                 new { Email = email, Token = token }, protocol: HttpContext.Request.Scheme);
@@ -469,6 +473,9 @@ namespace ASPNETCoreIdentityDemo.Controllers
 
                     if (result.Succeeded)
                     {
+                        // Once the Password is Reset, remove the token from the database
+                        await _userManager.RemoveAuthenticationTokenAsync(user, "ResetPassword", "ResetPasswordToken");
+
                         return RedirectToAction("ResetPasswordConfirmation", "Account");
                     }
 
