@@ -303,8 +303,8 @@ namespace ASPNETCoreIdentityDemo.Controllers
                 new { UserId = user.Id, Token = token }, protocol: HttpContext.Request.Scheme);
 
             // Send the Confirmation Link to the User Email Id
-            await _emailSender.SendEmailAsync(email, "ConfirmYourEmail",
-                $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(ConfirmationLink)}'> clicking here</a>.");
+            await _emailSender.SendEmailAsync(email, "Confirm Your Email", 
+                $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(ConfirmationLink)}'>clicking here</a>.", true);
         }
         #endregion
 
