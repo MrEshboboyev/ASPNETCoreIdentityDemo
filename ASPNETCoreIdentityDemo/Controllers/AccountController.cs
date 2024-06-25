@@ -757,7 +757,7 @@ namespace ASPNETCoreIdentityDemo.Controllers
                 // Update User's PhoneNumber and PhoneNumberConfirmed
                 user.PhoneNumber = phoneNumber;
                 user.PhoneNumberConfirmed = true;
-                _userManager.UpdateAsync(user);
+                await _userManager.UpdateAsync(user);
 
                 // return success page
                 return View("PhoneVerificationSuccessful");
@@ -769,6 +769,15 @@ namespace ASPNETCoreIdentityDemo.Controllers
                 ViewBag.ErrorMessage = "Either the Token expired or you entered an invalid Token";
                 return RedirectToAction("Error");
             }
+        }
+        #endregion
+
+        #region Phone Verification Successful
+        [Authorize]
+        [HttpGet]
+        public IActionResult PhoneVerificationSuccessful()
+        {
+            return View();
         }
         #endregion
     }
