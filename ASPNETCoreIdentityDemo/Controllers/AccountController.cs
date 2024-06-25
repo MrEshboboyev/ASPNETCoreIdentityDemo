@@ -554,5 +554,25 @@ namespace ASPNETCoreIdentityDemo.Controllers
             return View();
         }
         #endregion
+
+        #region Add Password
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> AddPassword()
+        {
+            // check user
+            var user = await _userManager.GetUserAsync(User);
+
+            var userHasPassword = await _userManager.HasPasswordAsync(user);
+
+            // if user already has password, action change password
+            if (userHasPassword)
+            {
+                return RedirectToAction("ChangePassword", "Account");
+            }
+            // if user has not password, to AddPassword view
+            return View();
+        }
+        #endregion
     }
 }
