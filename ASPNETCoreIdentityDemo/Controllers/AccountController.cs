@@ -18,15 +18,20 @@ namespace ASPNETCoreIdentityDemo.Controllers
         // emailSender instance
         private readonly ISenderEmail _emailSender;
 
+        // SMSSender instance
+        private readonly ISMSSender _smsSender;
+
         public AccountController(SignInManager<ApplicationUser> signInManager,
             RoleManager<ApplicationRole> roleManager,
             UserManager<ApplicationUser> userManager,
-            ISenderEmail emailSender)
+            ISenderEmail emailSender, 
+            ISMSSender smsSender)
         {
             _signInManager = signInManager;
             _roleManager = roleManager;
             _userManager = userManager;
             _emailSender = emailSender;
+            _smsSender = smsSender;
         }
 
         #region Register
@@ -685,6 +690,45 @@ namespace ASPNETCoreIdentityDemo.Controllers
             {
                 PhoneNumber = user.PhoneNumber
             };
+
+            return View(model);
+        }
+        #endregion
+
+        #region Send Phone Verification Code
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> SendPhoneVerificationCode(ConfirmPhoneNumberViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                // find the user
+                var user = await _userManager.GetUserAsync(User);
+                if (user == null)
+                {
+                    return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                }
+
+                // Generate the token
+                var token = await _userManager.GenerateChangePhoneNumberTokenAsync(user, model.PhoneNumber);
+
+                // Code to send the token via SMS
+                var result = await _smsSender.SendSMSAsync(token);
+
+                if(result)
+                {
+                    // Save or pass the phone number for later verification
+                    TempData["PhoneNumber"] = model.PhoneNumber;
+
+                    return RedirectToAction("VerifyPhoneNumber", "Account");
+                }
+                else
+                {
+                    ViewBag.ErrorTitle = "Unable to send SMS";
+                    ViewBag.ErrorMessage = "Please try after some time";
+                    return RedirectToAction("Error");
+                }
+            }
 
             return View(model);
         }
