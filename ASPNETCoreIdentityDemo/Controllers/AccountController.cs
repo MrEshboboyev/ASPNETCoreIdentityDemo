@@ -106,8 +106,16 @@ namespace ASPNETCoreIdentityDemo.Controllers
                     return View(model);
                 }
 
+                // The last boolean parameter lockoutOnFailure indicates if the account should be locked on failed login attempt. 
+                // On every failed login attempt AccessFailedCount column value in AspNetUsers table is incremented by 1. 
+                // When the AccessFailedCount reaches the configured MaxFailedAccessAttempts which in our case is 5,
+                // the account will be locked and LockoutEnd column is populated.
+                // After the account is lockedout, even if we provide the correct username and password,
+                // PasswordSignInAsync() method returns Lockedout result and
+                // the login will not be allowed for the duration the account is locked.
+
                 var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, 
-                    model.RememberMe, lockoutOnFailure: false);
+                    model.RememberMe, lockoutOnFailure: true);
 
                 if (result.Succeeded)
                 {
@@ -126,11 +134,19 @@ namespace ASPNETCoreIdentityDemo.Controllers
                 }
                 else if (result.IsLockedOut)
                 {
-                    // Handle lockout scenario
+                    //It's important to inform users when their account is locked.
+                    //This can be done through the UI or by sending an email notification.
+                    await SendAccountLockedEmail(model.Email);
+                    return View("AccountLocked");
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                    // Handle Failure 
+                    // Get the number of failed attempts
+                    var attemptsLeft = _userManager.Options.Lockout.MaxFailedAccessAttempts -
+                        await _userManager.GetAccessFailedCountAsync(user);
+
+                    ModelState.AddModelError(string.Empty, $"Invalid login attempt. Remaining Attempts : {attemptsLeft}");
                     return View(model);
                 }
             }
