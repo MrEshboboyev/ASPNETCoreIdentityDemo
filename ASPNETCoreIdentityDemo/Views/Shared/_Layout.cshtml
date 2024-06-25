@@ -57,6 +57,20 @@
                         @*If the user is signed-in display Logout link*@
                         @if (SignInManager.IsSignedIn(User))
                         {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMyAccountLink" role="button"
+                                   data-bs-toggle="dropdown" aria-expanded="false">
+                                    My Account
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="navbarDropdownMyAccountLink">
+                                    <a class="dropdown-item" asp-controller="Account"
+                                       asp-action="ChangePassword">Set Password</a>
+                                    <a class="dropdown-item" asp-controller="Account"
+                                       asp-action="UpdateProfile">Update Profile</a>
+                                    <a class="dropdown-item" asp-controller="Account"
+                                       asp-action="ConfirmPhoneNumber">Confirm Phone Number</a>
+                                </ul>
+                            </li>
                             <li class="nav-item">
                                 <form method="post" asp-controller="account" asp-action="logout">
                                     <button type="submit" style="width:auto"
@@ -64,11 +78,6 @@
                                         Logout @User?.Identity?.Name
                                     </button>
                                 </form>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Account" asp-action="ChangePassword">
-                                    Set Password
-                                </a>
                             </li>
                         }
                         else
