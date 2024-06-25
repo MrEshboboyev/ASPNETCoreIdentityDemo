@@ -24,7 +24,7 @@ namespace ASPNETCoreIdentityDemo.Controllers
         public AccountController(SignInManager<ApplicationUser> signInManager,
             RoleManager<ApplicationRole> roleManager,
             UserManager<ApplicationUser> userManager,
-            ISenderEmail emailSender, 
+            ISenderEmail emailSender,
             ISMSSender smsSender)
         {
             _signInManager = signInManager;
@@ -64,7 +64,7 @@ namespace ASPNETCoreIdentityDemo.Controllers
                     await SendConfirmationEmail(model.Email, user);
 
                     // redirect to ListRoles user as "Admin"
-                    if(_signInManager.IsSignedIn(User) && User.IsInRole("Admin"))
+                    if (_signInManager.IsSignedIn(User) && User.IsInRole("Admin"))
                     {
                         return RedirectToAction("ListUsers", "Administration");
                     }
@@ -106,7 +106,7 @@ namespace ASPNETCoreIdentityDemo.Controllers
                 // find this user
                 var user = await _userManager.FindByEmailAsync(model.Email);
 
-                if(user != null && !user.EmailConfirmed && (await _userManager.CheckPasswordAsync(user, model.Password)))
+                if (user != null && !user.EmailConfirmed && (await _userManager.CheckPasswordAsync(user, model.Password)))
                 {
                     ModelState.AddModelError(string.Empty, "Email not confirmed yet");
                     return View(model);
@@ -120,12 +120,12 @@ namespace ASPNETCoreIdentityDemo.Controllers
                 // PasswordSignInAsync() method returns Lockedout result and
                 // the login will not be allowed for the duration the account is locked.
 
-                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, 
+                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password,
                     model.RememberMe, lockoutOnFailure: true);
 
                 if (result.Succeeded)
                 {
-                    if(!string.IsNullOrEmpty(ReturnUrl) && Url.IsLocalUrl(ReturnUrl))
+                    if (!string.IsNullOrEmpty(ReturnUrl) && Url.IsLocalUrl(ReturnUrl))
                     {
                         return Redirect(ReturnUrl);
                     }
@@ -180,7 +180,7 @@ namespace ASPNETCoreIdentityDemo.Controllers
             // Check if the email id is already use in Database
             var user = await _userManager.FindByEmailAsync(Email);
 
-            if(user == null)
+            if (user == null)
             {
                 return Json(true);
             }
@@ -207,7 +207,7 @@ namespace ASPNETCoreIdentityDemo.Controllers
         {
             //This call will generate a URL that directs to the ExternalLoginCallback action method in the Account controller
             //with a route parameter of ReturnUrl set to the value of returnUrl.
-            var redirectUrl = Url.Action(action: "ExternalLoginCallback", controller: "Account", 
+            var redirectUrl = Url.Action(action: "ExternalLoginCallback", controller: "Account",
                 values: new { ReturnUrl = returnUrl });
 
             // Configure the redirect URL, provider and other properties
@@ -321,11 +321,11 @@ namespace ASPNETCoreIdentityDemo.Controllers
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
 
             // Build the Confirmation Link which must include the CallBack URL
-            var ConfirmationLink = Url.Action("ConfirmEmail", "Account", 
+            var ConfirmationLink = Url.Action("ConfirmEmail", "Account",
                 new { UserId = user.Id, Token = token }, protocol: HttpContext.Request.Scheme);
 
             // Send the Confirmation Link to the User Email Id
-            await _emailSender.SendEmailAsync(email, "Confirm Your Email", 
+            await _emailSender.SendEmailAsync(email, "Confirm Your Email",
                 $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(ConfirmationLink)}'>clicking here</a>.", true);
         }
         #endregion
@@ -342,7 +342,7 @@ namespace ASPNETCoreIdentityDemo.Controllers
 
             // find user
             var user = await _userManager.FindByIdAsync(UserId);
-            if (user == null) 
+            if (user == null)
             {
                 ViewBag.Message = $"The User ID {UserId} is Invalid";
                 return View("NotFound");
@@ -366,7 +366,7 @@ namespace ASPNETCoreIdentityDemo.Controllers
         [AllowAnonymous]
         public IActionResult ResendConfirmationEmail(bool isResend = true)
         {
-            if(isResend)
+            if (isResend)
             {
                 ViewBag.Message = "Resend Confirmation Email";
             }
@@ -385,7 +385,7 @@ namespace ASPNETCoreIdentityDemo.Controllers
         {
             var user = await _userManager.FindByEmailAsync(Email);
 
-            if (user == null || await _userManager.IsEmailConfirmedAsync(user)) 
+            if (user == null || await _userManager.IsEmailConfirmedAsync(user))
             {
                 // Handle the situation when the user does not exist or Email already confirmed.
                 // For security, don't reveal that the user does not exist or Email is already confirmed
@@ -411,13 +411,13 @@ namespace ASPNETCoreIdentityDemo.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 // find this user by email
                 var user = await _userManager.FindByEmailAsync(model.Email);
 
                 // checking user was found and email is confirmed
-                if(user != null && await _userManager.IsEmailConfirmedAsync(user))
+                if (user != null && await _userManager.IsEmailConfirmedAsync(user))
                 {
                     await SendForgotPasswordAsync(model.Email, user);
 
@@ -447,7 +447,7 @@ namespace ASPNETCoreIdentityDemo.Controllers
                 new { Email = email, Token = token }, protocol: HttpContext.Request.Scheme);
 
             // send the confirmation email to the User Email Id
-            await _emailSender.SendEmailAsync(email, "Reset Your Password", 
+            await _emailSender.SendEmailAsync(email, "Reset Your Password",
                 $"Please reset your password by <a href='{HtmlEncoder.Default.Encode(passwordResetLink)}'>clicking here</a>.", true);
         }
         #endregion
@@ -483,12 +483,12 @@ namespace ASPNETCoreIdentityDemo.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 // find user by email
                 var user = await _userManager.FindByEmailAsync(model.Email);
 
-                if(user != null)
+                if (user != null)
                 {
                     // reset password
                     var result = await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
@@ -498,9 +498,9 @@ namespace ASPNETCoreIdentityDemo.Controllers
                         // Upon successful password reset and if the account is lockedout,
                         // set the account lockout end date to current UTC date time, 
                         // so the user can login with the new password
-                        if(await _userManager.IsLockedOutAsync(user))
+                        if (await _userManager.IsLockedOutAsync(user))
                         {
-                            await _userManager.SetLockoutEndDateAsync(user, 
+                            await _userManager.SetLockoutEndDateAsync(user,
                                 DateTimeOffset.UtcNow);
                         }
 
@@ -511,7 +511,7 @@ namespace ASPNETCoreIdentityDemo.Controllers
                     }
 
                     // display errors 
-                    foreach(var error in result.Errors)
+                    foreach (var error in result.Errors)
                     {
                         ModelState.AddModelError(string.Empty, error.Description);
                     }
@@ -702,35 +702,73 @@ namespace ASPNETCoreIdentityDemo.Controllers
         {
             if (ModelState.IsValid)
             {
-                // find the user
                 var user = await _userManager.GetUserAsync(User);
                 if (user == null)
                 {
                     return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
                 }
 
-                // Generate the token
+                //Generate the Token
                 var token = await _userManager.GenerateChangePhoneNumberTokenAsync(user, model.PhoneNumber);
 
-                // Code to send the token via SMS
-                var result = await _smsSender.SendSMSAsync(token);
+                // Code to send the token via SMS 
+                var result = await _smsSender.SendSmsAsync(model.PhoneNumber, token);
 
-                if(result)
+                if (result)
                 {
                     // Save or pass the phone number for later verification
                     TempData["PhoneNumber"] = model.PhoneNumber;
 
+                    // Redirect to verification view
                     return RedirectToAction("VerifyPhoneNumber", "Account");
-                }
-                else
-                {
-                    ViewBag.ErrorTitle = "Unable to send SMS";
-                    ViewBag.ErrorMessage = "Please try after some time";
-                    return RedirectToAction("Error");
-                }
+                 };
+            }
+            else
+            {
+                ViewBag.ErrorTitle = "Unable to send SMS";
+                ViewBag.ErrorMessage = "Please try after some time";
+                return RedirectToAction("Error");
             }
 
             return View(model);
+        }
+        #endregion
+
+        #region Verify Phone Number
+        [Authorize]
+        [HttpGet]
+        public IActionResult VerifyPhoneNumber()
+        {
+            TempData["PhoneNumber"] = TempData["PhoneNumber"] as string;
+            return View();
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> VerifyPhoneNumber(string token)
+        {
+            var phoneNumber = TempData["PhoneNumber"] as string;
+            var user = await _userManager.GetUserAsync(User);
+
+            var result = await _userManager.VerifyChangePhoneNumberTokenAsync(user, token, phoneNumber);
+
+            if (result)
+            {
+                // Update User's PhoneNumber and PhoneNumberConfirmed
+                user.PhoneNumber = phoneNumber;
+                user.PhoneNumberConfirmed = true;
+                _userManager.UpdateAsync(user);
+
+                // return success page
+                return View("PhoneVerificationSuccessful");
+            }
+            else
+            {
+                // Handle Verification Failure
+                ViewBag.ErrorTitle = "Verification Failed";
+                ViewBag.ErrorMessage = "Either the Token expired or you entered an invalid Token";
+                return RedirectToAction("Error");
+            }
         }
         #endregion
     }
