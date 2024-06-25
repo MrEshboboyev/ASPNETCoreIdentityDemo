@@ -506,8 +506,21 @@ namespace ASPNETCoreIdentityDemo.Controllers
         #endregion
 
         #region Change Password
-        public IActionResult ChangePassword()
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> ChangePassword()
         {
+            // check user
+            var user = await _userManager.GetUserAsync(User);
+
+            var userHasPassword = await _userManager.HasPasswordAsync(user);
+
+            // if user already has password, action change password
+            if (!userHasPassword)
+            {
+                return RedirectToAction("AddPassword", "Account");
+            }
+            // if user has not password, to AddPassword view
             return View();
         }
 
@@ -571,6 +584,46 @@ namespace ASPNETCoreIdentityDemo.Controllers
                 return RedirectToAction("ChangePassword", "Account");
             }
             // if user has not password, to AddPassword view
+            return View();
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> AddPassword(AddPasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                // find user
+                var user = await _userManager.GetUserAsync(User);
+
+                if (user == null)
+                {
+                    ModelState.AddModelError(string.Empty, "Unable to load user");
+                    return View();
+                }
+
+                // add password this authorized user
+                var result = await _userManager.AddPasswordAsync(user, model.NewPassword);
+
+                // handle the failure scenario
+                if (!result.Succeeded)
+                {
+                    // display errors
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                    return View();
+                }
+
+                // handle success scenario
+                // refresh the authentication cookie to store the updated user information
+                await _signInManager.RefreshSignInAsync(user);
+
+                // redirect AddPasswordConfirmation action
+                return RedirectToAction("AddPasswordConfirmation", "Account");
+            }
+
             return View();
         }
         #endregion
