@@ -627,5 +627,12 @@ namespace ASPNETCoreIdentityDemo.Controllers
             return View();
         }
         #endregion
+
+        #region Add Password Confirmation
+        public IActionResult AddPasswordConfirmation()
+        {
+            return View();
+        }
+        #endregion
     }
 }
