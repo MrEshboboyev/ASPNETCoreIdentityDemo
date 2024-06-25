@@ -24,7 +24,7 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(
 
         // Lockout settings
         options.Lockout.AllowedForNewUsers = true; // Lockout new users
-        options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(1); // Lockout duration
+        options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30); // Lockout duration
         options.Lockout.MaxFailedAccessAttempts = 5; // number of failed attempts allowed
     })
     .AddEntityFrameworkStores<ApplicationDbContext>()
