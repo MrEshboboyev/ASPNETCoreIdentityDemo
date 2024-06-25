@@ -510,6 +510,42 @@ namespace ASPNETCoreIdentityDemo.Controllers
         {
             return View();
         }
+
+        [HttpPost]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                // find the user
+                var user = await _userManager.GetUserAsync(User);
+
+                if (user == null)
+                {
+                    return RedirectToAction("Login", "Account");
+                }
+
+                // ChangePasswordAsync
+                var result = await _userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
+
+                if (!result.Succeeded)
+                {
+                    // display errors
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                }
+
+                // upon successfully changing refresh sign-in cookie
+                await _signInManager.RefreshSignInAsync(user);
+
+                // return ChangePasswordConfirmation view
+                return RedirectToAction("ChangePasswordConfirmation", "Account");
+            }
+
+            // model is not valid
+            return View(model);
+        }
         #endregion
     }
 }
