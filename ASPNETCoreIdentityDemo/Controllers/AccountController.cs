@@ -504,5 +504,12 @@ namespace ASPNETCoreIdentityDemo.Controllers
             return View();
         }
         #endregion
+
+        #region Change Password
+        public IActionResult ChangePassword()
+        {
+            return View();
+        }
+        #endregion
     }
 }
