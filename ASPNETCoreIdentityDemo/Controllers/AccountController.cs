@@ -669,5 +669,25 @@ namespace ASPNETCoreIdentityDemo.Controllers
                 "Your account is locked Due to multiple invalid Attempts", true);
         }
         #endregion
+
+        #region Confirm Phone Number
+        public async Task<IActionResult> ConfirmPhoneNumber()
+        {
+            // find a user
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return NotFound($"Unable to load user with Id = '{_userManager.GetUserId(User)}'");
+            }
+
+            // user was found , create model confirm phone number
+            ConfirmPhoneNumberViewModel model = new ConfirmPhoneNumberViewModel
+            {
+                PhoneNumber = user.PhoneNumber
+            };
+
+            return View(model);
+        }
+        #endregion
     }
 }
