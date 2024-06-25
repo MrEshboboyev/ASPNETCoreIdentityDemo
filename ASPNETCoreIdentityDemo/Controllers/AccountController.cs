@@ -634,5 +634,14 @@ namespace ASPNETCoreIdentityDemo.Controllers
             return View();
         }
         #endregion
+
+        #region Send Account Locked Email
+        private async Task SendAccountLockedEmail(string? email)
+        {
+            // Send the confirmation email to the User Id
+            await _emailSender.SendEmailAsync(email, "Account Locked",
+                "Your account is locked Due to multiple invalid Attempts", true);
+        }
+        #endregion
     }
 }
