@@ -91,6 +91,9 @@ builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
     options.TokenLifespan = TimeSpan.FromHours(2);
 });
 
+// add lifetime for SMS Service
+builder.Services.AddTransient<ISMSSender, SMSSender>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
