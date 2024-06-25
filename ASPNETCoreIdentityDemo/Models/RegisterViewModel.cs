@@ -17,6 +17,10 @@ namespace ASPNETCoreIdentityDemo.Models
         [Remote(action:"IsEmailAvailable", controller:"Account")]
         public string Email { get; set; }
 
+        [Phone]
+        [Display(Name = "Phone Number")]
+        public string PhoneNumber { get; set; }
+
         [Required]
         [DataType(DataType.Password)]
         public string Password { get; set; }
