@@ -125,6 +125,13 @@ namespace ASPNETCoreIdentityDemo.Controllers
 
                 if (result.Succeeded)
                 {
+                    if(user?.LastPasswordChangedDate.AddDays(90) < DateTime.Now)
+                    {
+                        // Password has expired
+                        // Redirect user to change password view
+                        return View("PasswordExpired");
+                    }
+
                     if (!string.IsNullOrEmpty(ReturnUrl) && Url.IsLocalUrl(ReturnUrl))
                     {
                         return Redirect(ReturnUrl);
