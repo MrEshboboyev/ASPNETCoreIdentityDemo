@@ -52,7 +52,8 @@ namespace ASPNETCoreIdentityDemo.Controllers
                     LastName = model.LastName,
                     UserName = model.Email,
                     Email = model.Email,
-                    PhoneNumber = model.PhoneNumber
+                    PhoneNumber = model.PhoneNumber,
+                    LastPasswordChangedDate = DateTime.UtcNow,
                 };
 
                 var result = await _userManager.CreateAsync(user, model.Password);
@@ -125,7 +126,7 @@ namespace ASPNETCoreIdentityDemo.Controllers
 
                 if (result.Succeeded)
                 {
-                    if(user?.LastPasswordChangedDate.AddDays(90) < DateTime.Now)
+                    if(user?.LastPasswordChangedDate.AddDays(90) < DateTime.UtcNow)
                     {
                         // Password has expired
                         // Redirect user to change password view
@@ -517,8 +518,8 @@ namespace ASPNETCoreIdentityDemo.Controllers
 
                     if (result.Succeeded)
                     {
-                        // if reset password success, last changed date set to Now
-                        user.LastPasswordChangedDate = DateTime.Now;
+                        // if reset password success, last changed date set to UtcNow
+                        user.LastPasswordChangedDate = DateTime.UtcNow;
                         await _userManager.UpdateAsync(user);
 
                         // Upon successful password reset and if the account is lockedout,
@@ -607,7 +608,7 @@ namespace ASPNETCoreIdentityDemo.Controllers
                 }
 
                 // if change password process success, update last change password date
-                user.LastPasswordChangedDate = DateTime.Now;
+                user.LastPasswordChangedDate = DateTime.UtcNow;
                 await _userManager.UpdateAsync(user);
 
                 // upon successfully changing refresh sign-in cookie
@@ -676,6 +677,11 @@ namespace ASPNETCoreIdentityDemo.Controllers
                     }
                     return View();
                 }
+
+
+                // add password success, last password change date set to UtcNow
+                user.LastPasswordChangedDate = DateTime.UtcNow;
+                await _userManager.UpdateAsync(user);
 
                 // handle success scenario
                 // refresh the authentication cookie to store the updated user information
