@@ -137,6 +137,21 @@ namespace ASPNETCoreIdentityDemo.Controllers
                 if (result.RequiresTwoFactor)
                 {
                     // Handle two-factor authentication case
+                    // Generate 2FA token, send that mobile number and email
+                    // and redirect 2FA verification View
+
+                    var TwoFactorAuthenticationToken = await _userManager.GenerateTwoFactorTokenAsync(user, "Email");
+
+                    // sending SMS
+                    await _smsSender.SendSmsAsync(user.PhoneNumber, 
+                        $"Your 2FA token is {TwoFactorAuthenticationToken}");
+
+                    // sending email
+                    await _emailSender.SendEmailAsync(user.Email, "2FA Token", 
+                        $"Your 2FA token is {TwoFactorAuthenticationToken}", false);
+
+                    return RedirectToAction("VerifyTwoFactorToken", "Account",
+                        new { model.Email, ReturnUrl, model.RememberMe, TwoFactorAuthenticationToken });
                 }
                 else if (result.IsLockedOut)
                 {
@@ -865,6 +880,22 @@ namespace ASPNETCoreIdentityDemo.Controllers
                 ViewBag.ErrorMessage = "Either the Token is Expired or you entered some wrong information";
                 return View("Error");
             }
+        }
+        #endregion
+
+        #region Verify Two Factor Token
+        public IActionResult VerifyTwoFactorToken(string email, string returnUrl, bool rememberMe, 
+            string twoFactorAuthenticationToken)
+        {
+            VerifyTwoFactorTokenViewModel model = new VerifyTwoFactorTokenViewModel
+            {
+                Email = email,
+                ReturnUrl = returnUrl,
+                RememberMe = rememberMe,
+                TwoFactorCode = twoFactorAuthenticationToken
+            };
+
+            return View(model);
         }
         #endregion
     }
