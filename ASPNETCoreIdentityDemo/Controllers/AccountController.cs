@@ -884,6 +884,8 @@ namespace ASPNETCoreIdentityDemo.Controllers
         #endregion
 
         #region Verify Two Factor Token
+        [HttpGet]
+        [AllowAnonymous]
         public IActionResult VerifyTwoFactorToken(string email, string returnUrl, bool rememberMe, 
             string twoFactorAuthenticationToken)
         {
@@ -894,6 +896,50 @@ namespace ASPNETCoreIdentityDemo.Controllers
                 RememberMe = rememberMe,
                 TwoFactorCode = twoFactorAuthenticationToken
             };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> VerifyTwoFactorToken(VerifyTwoFactorTokenViewModel model)
+        {
+            if(!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            // find the user by email
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null)
+            {
+                ModelState.AddModelError(string.Empty, "Invalid Login Attempt.");
+                return View(model);
+            }
+
+            // Validate 2FA Token
+            var result = await _userManager.VerifyTwoFactorTokenAsync(user, "Email", model.TwoFactorCode);
+            if (result)
+            {
+                // Handle success scenario
+                // Sign in the user and redirect
+                await _signInManager.SignInAsync(user, isPersistent: model.RememberMe);
+
+                // Check if the ReturnUrl is not null and is a local Url
+                if (model.ReturnUrl != null && Url.IsLocalUrl(model.ReturnUrl))
+                {
+                    return Redirect(model.ReturnUrl);
+                }
+                else
+                {
+                    // Redirect to the Default page
+                    return RedirectToAction("Index", "Home");
+                }
+            }
+
+            // handle failure scenario
+            ModelState.AddModelError(string.Empty, "Invalid verification code");
 
             return View(model);
         }
