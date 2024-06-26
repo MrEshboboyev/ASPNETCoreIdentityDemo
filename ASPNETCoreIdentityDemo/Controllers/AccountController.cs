@@ -823,6 +823,49 @@ namespace ASPNETCoreIdentityDemo.Controllers
 
             return View();
         }
+
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> ManageTwoFactorAuthentication(string token)
+        {
+            // find user
+            var user = await _userManager.GetUserAsync(User);
+            if(user == null)
+            {
+                return NotFound($"Unable to load user with ID = '{_userManager.GetUserId(User)}'");
+            }
+
+            // check token is valid
+            var result = await _userManager.VerifyTwoFactorTokenAsync(user, TokenOptions.DefaultProvider, token);
+
+            if(result)
+            {
+                // Handle valid token scenario
+                if (user.TwoFactorEnabled)
+                {
+                    user.TwoFactorEnabled = false;
+                    ViewBag.Message = "You have successfully disabled Two Factor Authentication";
+                }
+                else
+                {
+                    user.TwoFactorEnabled = true;
+                    ViewBag.Message = "You have successfully enabled Two Factor Authentication";
+                }
+
+                // update database for this user
+                await _userManager.UpdateAsync(user);
+
+                return View("TwoFactorAuthenticationSuccessful");
+            }
+            else
+            {
+                // Handle invalid token scenario
+                ViewBag.ErrorTitle = "Unable to Enable/Disable Two Factor Authentication";
+                ViewBag.ErrorMessage = "Either the Token is Expired or you entered some wrong information";
+                return View("Error");
+            }
+        }
         #endregion
     }
 }
