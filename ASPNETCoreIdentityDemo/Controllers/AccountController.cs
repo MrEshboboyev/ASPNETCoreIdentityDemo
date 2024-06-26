@@ -517,6 +517,10 @@ namespace ASPNETCoreIdentityDemo.Controllers
 
                     if (result.Succeeded)
                     {
+                        // if reset password success, last changed date set to Now
+                        user.LastPasswordChangedDate = DateTime.Now;
+                        await _userManager.UpdateAsync(user);
+
                         // Upon successful password reset and if the account is lockedout,
                         // set the account lockout end date to current UTC date time, 
                         // so the user can login with the new password
@@ -601,6 +605,10 @@ namespace ASPNETCoreIdentityDemo.Controllers
                         ModelState.AddModelError(string.Empty, error.Description);
                     }
                 }
+
+                // if change password process success, update last change password date
+                user.LastPasswordChangedDate = DateTime.Now;
+                await _userManager.UpdateAsync(user);
 
                 // upon successfully changing refresh sign-in cookie
                 await _signInManager.RefreshSignInAsync(user);
