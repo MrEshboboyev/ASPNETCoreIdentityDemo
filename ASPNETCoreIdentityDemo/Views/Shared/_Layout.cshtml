@@ -1,5 +1,9 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @inject SignInManager<ApplicationUser> SignInManager;
+@inject UserManager<ApplicationUser> UserManager
+@{
+    var userDetail = await UserManager.GetUserAsync(User);
+}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -69,6 +73,18 @@
                                        asp-action="UpdateProfile">Update Profile</a>
                                     <a class="dropdown-item" asp-controller="Account"
                                        asp-action="ConfirmPhoneNumber">Confirm Phone Number</a>
+
+                                    @if (userDetail.TwoFactorEnabled)
+                                    {
+                                        <a class="dropdown-item" asp-controller="Account"
+                                           asp-action="ManageTwoFactorAuthentication">Disable 2FA</a>
+                                    }
+                                    else
+                                    {
+                                        <a class="dropdown-item" asp-controller="Account"
+                                           asp-action="ManageTwoFactorAuthentication">Enable 2FA</a>
+                                    }
+
                                 </ul>
                             </li>
                             <li class="nav-item">

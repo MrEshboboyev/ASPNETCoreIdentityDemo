@@ -780,5 +780,49 @@ namespace ASPNETCoreIdentityDemo.Controllers
             return View();
         }
         #endregion
+
+        #region Manage Two Factor Authentication
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> ManageTwoFactorAuthentication()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if(user == null)
+            {
+                return NotFound($"Unable to load user with ID = '{_userManager.GetUserId(User)}'");
+            }
+
+            // First , we need check email and number confirmed
+            if(!user.EmailConfirmed || !user.PhoneNumberConfirmed)
+            {
+                ViewBag.ErrorTitle = "You cannot enable/disable Two Factor Authentication";
+                ViewBag.ErrorMessage = "Your Phone Number or email not Confirmed yet";
+                return View("Error");
+            }
+
+            string message;
+            if(user.TwoFactorEnabled)
+            {
+                message = "Disable 2FA";
+            }
+            else
+            {
+                message = "Enable 2FA";
+            }
+
+            // Generate token for 2FA
+            var TwoFactorToken = await _userManager.GenerateTwoFactorTokenAsync(user, TokenOptions.DefaultProvider);
+
+            // Sending the token Email Id and Mobile Number
+
+            // sending SMS 
+            var result = await _smsSender.SendSmsAsync(user.PhoneNumber, $"Your token to {message} is {TwoFactorToken}");
+
+            // sending token to the email
+            await _emailSender.SendEmailAsync(user.Email, $"Your token to {message} is {TwoFactorToken}", TwoFactorToken, false);
+
+            return View();
+        }
+        #endregion
     }
 }
